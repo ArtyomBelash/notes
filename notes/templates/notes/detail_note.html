@@ -56,8 +56,8 @@
         <div class="note-card">
             <h3>{{ note.title }}</h3>
             <p>{{ note.description }}</p>
-            <a href="{% url 'update' note.slug %}" class="btn">update</a>
-            <a href="{% url 'delete' note.slug %}" class="btn">delete</a>
+            <a href="{% url 'notes:update' note.slug %}" class="btn">update</a>
+            <a href="{% url 'notes:delete' note.slug %}" class="btn">delete</a>
         </div>
     </div>
 </div>

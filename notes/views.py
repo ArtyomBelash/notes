@@ -1,27 +1,34 @@
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse_lazy
-from .forms import NoteForm
+from .forms import NoteCreateAndUpdateForm
 from .models import Note
 from django.views import generic
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
-def index(request):
-    owner = request.user
-    notes = Note.objects.filter(owner=owner)
-    return render(request, 'notes/index.html', {'notes': notes})
+class NotesListView(generic.ListView):
+    context_object_name = 'notes'
+    template_name = 'notes/index.html'
+
+    def get_queryset(self):
+        if self.request.user.is_authenticated:
+            owner = self.request.user
+            return Note.objects.filter(owner=owner)
 
 
-def detail(request, slug):
-    note = Note.objects.get(slug=slug)
-    return render(request, 'notes/detail.html', {'note': note})
+class NoteDetailView(generic.DetailView):
+    model = Note
+    context_object_name = 'note'
+    template_name = 'notes/detail_note.html'
+    slug_field = 'slug'
 
 
-class NoteUpdateView(generic.UpdateView):
+class NoteUpdateView(LoginRequiredMixin, generic.UpdateView):
+    login_url = 'login'
     model = Note
     slug_field = 'slug'
-    # fields = ('name', 'description')
-    template_name = 'notes/update.html'
-    form_class = NoteForm
+    template_name = 'notes/update_note.html'
+    form_class = NoteCreateAndUpdateForm
 
     def get_object(self, queryset=None):
         slug = self.kwargs.get('slug')
@@ -29,20 +36,21 @@ class NoteUpdateView(generic.UpdateView):
 
     def form_valid(self, form):
         obj = form.save(commit=False)
-        obj.user = self.request.user
+        obj.owner = self.request.user
         obj.save()
         return super().form_valid(form)
 
     def get_success_url(self):
         slug = self.kwargs['slug']
-        return reverse_lazy('detail', kwargs={'slug': slug})
+        return reverse_lazy('notes:detail', kwargs={'slug': slug})
 
 
-class CreateNote(generic.CreateView):
+class NoteCreateView(LoginRequiredMixin, generic.CreateView):
+    login_url = 'login'
     model = Note
-    form_class = NoteForm
-    success_url = reverse_lazy('index')
-    template_name = 'notes/create.html'
+    form_class = NoteCreateAndUpdateForm
+    success_url = reverse_lazy('notes:index')
+    template_name = 'notes/create_note.html'
 
     def form_valid(self, form):
         obj = form.save(commit=False)
@@ -51,10 +59,11 @@ class CreateNote(generic.CreateView):
         return super().form_valid(form)
 
 
-class DeleteNote(generic.DeleteView):
+class NoteDeleteView(LoginRequiredMixin, generic.DeleteView):
+    login_url = 'login'
     model = Note
-    success_url = reverse_lazy('index')
-    template_name = 'notes/delete.html'
+    success_url = reverse_lazy('notes:index')
+    template_name = 'notes/confirm_delete_note.html'
 
     def get_object(self, queryset=None):
         obj = get_object_or_404(Note, slug=self.kwargs['slug'])

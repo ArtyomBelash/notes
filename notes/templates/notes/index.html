@@ -61,7 +61,7 @@
                         <div class="note-card">
                             <h3>{{ note.title }}</h3>
                             <p>{{ note.description }}</p>
-                            <a href="{% url 'detail' note.slug %}" class="btn">Edit</a>
+                            <a href="{% url 'notes:detail' note.slug %}" class="btn">Edit</a>
                         </div>
                     {% endfor %}
                 </div>
@@ -71,7 +71,7 @@
         {% else %}
             <div class="welcome-box">
                 <h1>Welcome to My Notes!</h1>
-                <p>Please <a href="{% url 'login' %}">log in</a> or <a href="#">register</a> to start using the app.</p>
+                <p>Please <a href="{% url 'profile:login' %}">log in</a> or <a href="{% url 'profile:registration' %}">Register</a> to start using the app.</p>
             </div>
         {% endif %}
     </div>

@@ -8,10 +8,6 @@ def upload_to(instance, filename):
     return f'profiles/{instance.username}/{filename}'
 
 
-def get_slug(instance):
-    return f'{instance.username}'
-
-
 class Profile(AbstractUser):
     email = models.EmailField(_('email address'), unique=True, validators=[EmailValidator()])
     picture = models.ImageField('Фото', upload_to=upload_to, default='profiles/default/img.png')
@@ -19,7 +15,7 @@ class Profile(AbstractUser):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = get_slug
+            self.slug = self.username
         return super().save(*args, **kwargs)
 
     class Meta:
