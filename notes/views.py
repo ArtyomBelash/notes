@@ -22,7 +22,6 @@ class NoteUpdateView(generic.UpdateView):
     # fields = ('name', 'description')
     template_name = 'notes/update.html'
     form_class = NoteForm
-    success_url = reverse_lazy('index')
 
     def get_object(self, queryset=None):
         slug = self.kwargs.get('slug')
@@ -33,6 +32,10 @@ class NoteUpdateView(generic.UpdateView):
         obj.user = self.request.user
         obj.save()
         return super().form_valid(form)
+
+    def get_success_url(self):
+        slug = self.kwargs['slug']
+        return reverse_lazy('detail', kwargs={'slug': slug})
 
 
 class CreateNote(generic.CreateView):

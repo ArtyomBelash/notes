@@ -54,7 +54,7 @@
 <div class="container">
     <div class="note-grid">
         <div class="note-card">
-            <h3>{{ note.name }}</h3>
+            <h3>{{ note.title }}</h3>
             <p>{{ note.description }}</p>
             <a href="{% url 'update' note.slug %}" class="btn">update</a>
             <a href="{% url 'delete' note.slug %}" class="btn">delete</a>
