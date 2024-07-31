@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block title %}My Notes{% endblock %}
+
+{% block content %}
+<style>
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .note-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-gap: 20px;
+    }
+
+    .note-card {
+        background-color: #f4f4f4;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    .note-card h3 {
+        margin-top: 0;
+    }
+
+    .note-card p {
+        margin-bottom: 20px;
+    }
+
+    .btn {
+        background-color: #4CAF50;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    .btn:hover {
+        background-color: #3e8e41;
+    }
+
+    .welcome-box {
+        background-color: #f4f4f4;
+        border-radius: 10px;
+        padding: 20px;
+        text-align: center;
+    }
+</style>
+    <div class="container">
+        {% if user.is_authenticated %}
+            <h1>Welcome, {{ user.username }}!</h1>
+            <h2>Your Notes:</h2>
+            {% if notes %}
+                <div class="note-grid">
+                    {% for note in notes %}
+                        <div class="note-card">
+                            <h3>{{ note.title }}</h3>
+                            <p>{{ note.description }}</p>
+                            <a href="{% url 'detail' note.slug %}" class="btn">Edit</a>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p>You haven't created any notes yet.</p>
+            {% endif %}
+        {% else %}
+            <div class="welcome-box">
+                <h1>Welcome to My Notes!</h1>
+                <p>Please <a href="{% url 'login' %}">log in</a> or <a href="#">register</a> to start using the app.</p>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
+
